@@ -1,0 +1,14 @@
+FROM golang as build
+
+COPY . /nicky
+
+WORKDIR /nicky
+
+RUN make nicky.exe
+
+
+FROM ubuntu
+
+COPY --from=build /nicky/nicky.exe /bin/nicky.exe
+
+CMD /bin/nicky.exe
