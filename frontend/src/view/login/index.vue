@@ -1,16 +1,25 @@
 <template>
+
   <div class="loginContent">
-    <el-form class="loginForm">
-      <el-form-item class="loginFormItem">
-        <el-input v-model="username" placeholder="请输入用户名"></el-input>
-      </el-form-item>
-      <el-form-item class="loginFormItem">
-        <el-input v-model="password" type="password" placeholder="请输入密码"></el-input>
-      </el-form-item>
-      <el-form-item class="loginFormItem">
-        <el-button class="submit-button" type="primary" @click="doLogin">登录</el-button>
-      </el-form-item>
-    </el-form>
+    <div class="loginForm">
+      <div class="loginHeader">
+        <el-image class="logoImage" :src="require('../../assets/logo.png')"></el-image>
+        <span class="logoFont">NickyShell</span>
+      </div>
+
+      <el-form @submit.enter.prevent>
+        <el-form-item class="loginFormItem">
+          <el-input v-model="username" placeholder="请输入用户名"></el-input>
+        </el-form-item>
+        <el-form-item class="loginFormItem">
+          <el-input v-model="password" type="password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+        <el-form-item class="loginFormItem">
+          <el-button class="submit-button" type="primary" native-type="submit" @click="doLogin">登录</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
   </div>
 </template>
 
@@ -58,6 +67,7 @@ export default {
   justify-content: center;
   align-items: center;
   position: relative;
+  flex-direction: column;
 }
 
 .loginForm {
@@ -88,5 +98,24 @@ export default {
 
 .submit-button:hover {
   background-color: #ff8d0a;
+}
+
+.loginHeader {
+  text-align: center;
+  width: 100%;
+  font-size: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 30px;
+}
+
+.logoImage {
+  width: 60px;
+}
+
+.logoFont {
+  position: relative;
+  top: -2px;
 }
 </style>
