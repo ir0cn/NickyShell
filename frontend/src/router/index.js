@@ -3,15 +3,18 @@ import {createRouter, createWebHashHistory} from "vue-router";
 const routes = [
     {
         path: '/',
-        redirect: '/remote'
+        redirect: '/remote',
+        meta: {title: "主页"}
     },
     {
         path: '/login',
-        component: () => import('../view/login')
+        component: () => import('../view/login'),
+        meta: {title: "登录"}
     },
     {
         path: '/remote',
-        component: () => import('../view/remote')
+        component: () => import('../view/remote'),
+        meta: {title: "远程管理"}
     }
 ]
 

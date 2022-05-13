@@ -87,7 +87,14 @@ func main() {
 
 var upgrade = websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }}
 
+const (
+	CMD_DATA = iota
+	CMD_RESIZE
+	CMD_HEALTHCHECK
+)
+
 type Message struct {
+	Cmd  int    `json:"cmd"`
 	Data string `json:"data"`
 	Cols int    `json:"cols"`
 	Rows int    `json:"rows"`
@@ -120,6 +127,8 @@ func WsConnect(ctx *gin.Context) {
 	go func() {
 		defer func() { _ = ptmx.Close() }()
 		defer func() { _ = ws.Close() }()
+
+	ForLoop:
 		for {
 			_, data, err := ws.ReadMessage()
 			if err != nil {
@@ -130,13 +139,16 @@ func WsConnect(ctx *gin.Context) {
 			if err := json.Unmarshal(data, msg); err != nil {
 				break // not json data.
 			}
-			if msg.Data != "" {
+			switch msg.Cmd {
+			case CMD_DATA:
 				if _, err := ptmx.Write([]byte(msg.Data)); err != nil {
 					fmt.Println("ptmx.write:", err)
-					break
+					break ForLoop
 				}
-			} else if msg.Cols != 0 {
+			case CMD_RESIZE:
 				_ = pty.Setsize(ptmx, &pty.Winsize{Cols: uint16(msg.Cols), Rows: uint16(msg.Rows)})
+			case CMD_HEALTHCHECK:
+				// do nothing
 			}
 		}
 		if err := cmd.Process.Signal(syscall.SIGHUP); err != nil {

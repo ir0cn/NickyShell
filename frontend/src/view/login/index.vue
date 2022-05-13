@@ -17,6 +17,7 @@
 <script>
 import http from '../../util/http'
 import router from '../../router'
+
 export default {
   name: "login",
   data() {
@@ -83,5 +84,9 @@ export default {
   width: 100%;
   border: 1px solid #ff7d0a;
   border-radius: 4px;
+}
+
+.submit-button:hover {
+  background-color: #ff8d0a;
 }
 </style>

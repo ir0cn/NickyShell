@@ -17,18 +17,17 @@ export default {
       fitAddon: null,
       wsUrl: "",
       token: '',
+      wsProto: {
+        "http:": "ws",
+        "https:": "wss",
+      }
     }
   },
   methods: {
     initWsUrl() {
-      let url = window.location.href
-      let protocol = "wss://"
-      if (url.substring(0, 7) === 'http://') {
-        protocol = "ws://"
-      }
-      this.wsUrl = protocol + window.location.host + '/api/v1/assets/localhost/connect'
-      // this.wsUrl = 'ws://127.0.0.1:8081/api/v1/assets/localhost/connect'
-      // console.log('wsurl:' + this.wsUrl)
+      const {protocol, host} = window.location
+      console.log(protocol, host)
+      this.wsUrl = this.wsProto[protocol] + "://" + host + '/api/v1/assets/localhost/connect'
     },
     initTerminal() {
       this.term = new Terminal({
@@ -58,7 +57,7 @@ export default {
         console.log("ws closed")
       }
       this.ws.onerror = () => {
-        console.log("ws connect error" )
+        console.log("ws connect error")
       }
       this.ws.onmessage = (msg) => {
         this._read_as_text(msg.data)
@@ -70,19 +69,18 @@ export default {
       reader.readAsText(data, 'utf-8')
     },
     resize() {
-      // console.log('resize')
       this.fitAddon.fit()
+      let cmd = 1
       let cols = this.term.cols
       let rows = this.term.rows
-      // console.log(this.$refs['terminal'].offsetWidth)
-      // console.log(cols, rows)
-      this.ws.send(JSON.stringify({cols, rows}))
+      this.ws.send(JSON.stringify({cmd, cols, rows}))
     },
   },
   mounted() {
-    this. token = sessionStorage.getItem('token')
-    if (this.token === null || this.token === ""){
+    this.token = sessionStorage.getItem('token')
+    if (this.token === null || this.token === "") {
       this.$router.push('/login')
+      return
     }
     this.initWsUrl()
     this.initTerminal()
@@ -93,7 +91,7 @@ export default {
 </script>
 
 <style scoped>
-.viewport{
+.viewport {
   width: 100%;
   height: 100%;
 }
