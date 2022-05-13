@@ -20,7 +20,8 @@ export default {
       wsProto: {
         "http:": "ws",
         "https:": "wss",
-      }
+      },
+      timer: null,
     }
   },
   methods: {
@@ -52,9 +53,18 @@ export default {
       this.ws = new WebSocket(this.wsUrl, [this.token])
       this.ws.onopen = () => {
         this.resize()
+        this.timer = setInterval(() => {
+          this.ws.send('{"cmd":2}')
+        }, 30 * 1000)
       }
       this.ws.onclose = () => {
         console.log("ws closed")
+        clearInterval(this.timer)
+        this.$alert("连接已关闭", '提示', {
+          callback: function () {
+            window.close()
+          }
+        })
       }
       this.ws.onerror = () => {
         console.log("ws connect error")
