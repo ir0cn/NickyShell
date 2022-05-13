@@ -11,3 +11,9 @@ NickyShell for remote shell
 `JWTKEY`: token of nickyshell
  
 
+## RUN
+
+```bash
+$ docker-compose build
+$ docker-compose up -d
+```
