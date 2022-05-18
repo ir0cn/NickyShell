@@ -1,6 +1,7 @@
 package service
 
 import (
+	. "NickyShell/nicky/exception"
 	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
@@ -41,11 +42,11 @@ type Token struct {
 func (svc *Service) UserLogin(ctx *gin.Context) {
 	defer func() { _ = ctx.Request.Body.Close() }()
 	data, err := ioutil.ReadAll(ctx.Request.Body)
-	CheckError(err, "错误的提交数据")
+	ThrowIfErrorWithMessage(err, "错误的提交数据")
 
 	user := &LoginData{}
 	err = json.Unmarshal(data, user)
-	CheckError(err, "错误的提交数据")
+	ThrowIfErrorWithMessage(err, "错误的提交数据")
 
 	if user.Username != UserName || user.Password != Password {
 		Throw("错误的用户名/口令")
@@ -53,7 +54,7 @@ func (svc *Service) UserLogin(ctx *gin.Context) {
 
 	token := &Token{}
 	token.Token, err = JwtSign(user.Username)
-	CheckError(err, "内部错误")
+	ThrowIfErrorWithMessage(err, "内部错误")
 	ctx.JSON(200, token)
 }
 

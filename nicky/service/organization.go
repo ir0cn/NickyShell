@@ -2,16 +2,22 @@ package service
 
 import (
 	"NickyShell/nicky/users/organization"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 func (svc *Service) ListOrganizations(ctx *gin.Context) {
-	orgs, err := organization.ListOrganizations(svc.dbEngine)
-	CheckError(err, fmt.Sprintf("ListOrganizations: %v", err))
+	orgs := organization.ListOrganizations(svc.dbEngine)
 	ctx.JSON(200, orgs)
 }
 
-func (svc *Service) NewOrganization(ctx *gin.Context) {
+func (svc *Service) UpdateOrganization(ctx *gin.Context) {
+	org := &organization.Organization{}
+	ParamStruct(ctx, org)
+	organization.UpdateOrganization(svc.dbEngine, org)
+}
 
+func (svc *Service) DeleteOrganization(ctx *gin.Context) {
+	org := &organization.Organization{}
+	ParamStruct(ctx, org)
+	organization.DeleteOrganization(svc.dbEngine, org)
 }

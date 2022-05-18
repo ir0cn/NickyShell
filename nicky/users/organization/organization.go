@@ -2,13 +2,14 @@ package organization
 
 import (
 	"NickyShell/nicky/db"
+	. "NickyShell/nicky/exception"
 	"time"
 )
 
 type Organization struct {
 	Id         int64           `json:"-"`
-	Oid        int64           `json:"id" xorm:"notnull comment('组织ID')"`
-	Pid        int64           `json:"pid" xorm:"notnull comment('父ID')"`
+	Oid        int64           `json:"id,string" xorm:"unique notnull comment('组织ID')"`
+	Pid        int64           `json:"pid,string" xorm:"notnull comment('父ID')"`
 	Name       string          `json:"label" xorm:"varchar(256) notnull comment('组织名称')"`
 	Children   []*Organization `json:"children,omitempty" xorm:"-"`
 	CreateTime time.Time       `json:"-" xorm:"created"`
@@ -56,10 +57,20 @@ func ToTree(orgs []Organization) *Organization {
 	return &orgs[0]
 }
 
-func ListOrganizations(dbEngine *db.DbEngine) (*Organization, error) {
+func ListOrganizations(dbEngine *db.DbEngine) *Organization {
 	orgs := make([]Organization, 0)
-	if err := dbEngine.Find(&orgs); err != nil {
-		return nil, err
-	}
-	return ToTree(orgs), nil
+	err := dbEngine.Find(&orgs)
+	ThrowIfError(err)
+	return ToTree(orgs)
+}
+
+func UpdateOrganization(dbEngine *db.DbEngine, org *Organization) {
+	_, err := dbEngine.Exec("insert into organization(oid,pid,name) values (?,?,?) "+
+		"on duplicate key update name = values(name)", org.Oid, org.Pid, org.Name)
+	ThrowIfError(err)
+}
+
+func DeleteOrganization(dbEngine *db.DbEngine, org *Organization) {
+	_, err := dbEngine.Delete(org)
+	ThrowIfError(err)
 }

@@ -44,7 +44,7 @@ export default {
         sessionStorage.setItem('token', data['token'])
         router.push('/')
       }).catch((err) => {
-        this.$message(err)
+        this.$message.error(err)
       })
     }
   },

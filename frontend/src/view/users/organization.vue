@@ -4,7 +4,7 @@
       <vue3-tree-org
           :data="data"
           collapsable="collapsable"
-          :default-expand-level="level"
+          :default-expand-level="5"
           :node-draggable="false"
           :define-menus="menus"
           @on-node-blur="nodeBlur"
@@ -17,14 +17,13 @@
 <script>
 import {Vue3TreeOrg} from "vue3-tree-org";
 import "vue3-tree-org/lib/vue3-tree-org.css";
-import {fetch, post} from '@/util/http'
+import {fetch, post, put } from '@/util/http'
 
 export default {
   name: "organization",
   components: {Vue3TreeOrg},
   data() {
     return {
-      level: 5,
       data: {id: 0, pid: 0, label: '默认组织'},
       menus: [
         {name: '复制组织名称', command: 'copy'},
@@ -36,19 +35,23 @@ export default {
   },
   methods: {
     nodeDelete(data) {
-      console.log("node delete:", data)
+      console.log("remove:",{data})
+      put("/organization", data)
+          .then(() => {
+            this.$message.success('删除成功')
+          })
+          .catch(err => {
+            this.$message.error(err)
+          })
     },
     nodeBlur(e, data) {
-      if (data.newNode === true) {
-        console.log('new node:', data)
-        post("/organization", data).then(res => {
-          this.$message(res.data)
-        }).catch(err => {
-          this.$message(err)
-        })
-      } else {
-        console.log("edit node:", data)
-      }
+      post("/organization", data)
+          .then(() => {
+            this.$message.success('更新成功')
+          })
+          .catch(err => {
+            this.$message.error(err)
+          })
     },
     getOrganization() {
       fetch("/organization")
@@ -56,7 +59,7 @@ export default {
             this.data = data
           })
           .catch(err => {
-            this.$message(err)
+            this.$message.error(err)
           })
     }
   },

@@ -42,7 +42,8 @@ func (svc *Service) StartWebService() error {
 
 		// 组织
 		{"/api/v1/organization", router.GET, svc.ListOrganizations, false},
-		{"/api/v1/organization", router.POST, svc.NewOrganization, false},
+		{"/api/v1/organization", router.POST, svc.UpdateOrganization, false},
+		{"/api/v1/organization", router.PUT, svc.DeleteOrganization, false},
 	}
 	for _, r := range routers {
 		r.Method(r.Uri, svc.makeHandler(r.Action, r.NeedAuth))
