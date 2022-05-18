@@ -30,7 +30,7 @@ func (svc *Service) WsConnect(ctx *gin.Context) {
 	token := ctx.Request.Header.Get("Sec-Websocket-Protocol")
 
 	if _, ok := JwtVerify(token); !ok {
-		ctx.JSON(401, &Response{Code: 1003, Message: "Invalid Token"})
+		ctx.JSON(401, "Invalid Token")
 		panic(nil)
 	}
 
@@ -38,12 +38,12 @@ func (svc *Service) WsConnect(ctx *gin.Context) {
 		"Sec-Websocket-Protocol": {token},
 	})
 	if err != nil {
-		panic(&Response{Code: 10001, Message: fmt.Sprintf("upgrade.Upgrade failed: %v", err)})
+		panic(fmt.Sprintf("upgrade.Upgrade failed: %v", err))
 	}
 	cmd := exec.Command("bash")
 	ptmx, err := pty.Start(cmd)
 	if err != nil {
-		panic(&Response{Code: 10001, Message: fmt.Sprintf("pty.Start bash failed: %v", err)})
+		panic(fmt.Sprintf("pty.Start bash failed: %v", err))
 		return
 	}
 

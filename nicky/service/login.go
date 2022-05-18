@@ -41,19 +41,19 @@ type Token struct {
 func (svc *Service) UserLogin(ctx *gin.Context) {
 	defer func() { _ = ctx.Request.Body.Close() }()
 	data, err := ioutil.ReadAll(ctx.Request.Body)
-	CheckError(err, &Response{Code: 1001, Message: "错误的提交数据"})
+	CheckError(err, "错误的提交数据")
 
 	user := &LoginData{}
 	err = json.Unmarshal(data, user)
-	CheckError(err, &Response{Code: 1001, Message: "错误的提交数据"})
+	CheckError(err, "错误的提交数据")
 
 	if user.Username != UserName || user.Password != Password {
-		Throw(&Response{Code: 1002, Message: "错误的用户名/口令"})
+		Throw("错误的用户名/口令")
 	}
 
 	token := &Token{}
 	token.Token, err = JwtSign(user.Username)
-	CheckError(err, &Response{1001, "内部错误", nil})
+	CheckError(err, "内部错误")
 	ctx.JSON(200, token)
 }
 
@@ -62,7 +62,7 @@ func (svc *Service) Verify(ctx *gin.Context) bool {
 	token := ctx.GetHeader("Authorization")
 	fmt.Println("Token:", token)
 	if _, ok := JwtVerify(token); !ok {
-		ctx.JSON(401, &Response{Code: 1002, Message: "错误的认证信息"})
+		ctx.JSON(401, "错误的认证信息")
 		ctx.Abort()
 		return false
 	}

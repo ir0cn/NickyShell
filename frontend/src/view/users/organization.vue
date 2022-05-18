@@ -53,7 +53,7 @@ export default {
     getOrganization() {
       fetch("/organization")
           .then(data => {
-            this.data = data.data
+            this.data = data
           })
           .catch(err => {
             this.$message(err)

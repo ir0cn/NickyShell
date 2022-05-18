@@ -40,12 +40,11 @@ export default {
       http.post('/user/admin/login', {
         username: this.username,
         password: this.password
-      }).then((res) => {
-        sessionStorage.setItem('token', res.data['token'])
+      }).then((data) => {
+        sessionStorage.setItem('token', data['token'])
         router.push('/')
       }).catch((err) => {
-        console.log(err)
-        this.$message(err['code'] + ' ' + err['message'])
+        this.$message(err)
       })
     }
   },

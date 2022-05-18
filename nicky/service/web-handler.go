@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,11 +19,7 @@ func (svc *Service) makeHandler(f HandleFunc, needAuth bool) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		defer func() {
 			if r := recover(); r != nil {
-				if res, ok := r.(*Response); ok {
-					ctx.JSON(400, res)
-				} else {
-					ctx.JSON(400, &Response{Code: 1000, Message: fmt.Sprintf("%v", r)})
-				}
+				ctx.String(400, "%v", r)
 				ctx.Abort()
 				return
 			}
